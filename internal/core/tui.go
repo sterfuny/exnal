@@ -1,11 +1,35 @@
-package main
+package core
 
 import (
 	"fmt"
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
+	. "exnal/tui/questions"
+	"exnal/internal/proctor"
 )
+
+func InitialModel() model {
+	
+    var questions []Question = proctor.GetQuestionAll()
+	// for i := 0; {
+	// 	questions = append(questions, proctor.GetQuestion(i))
+	// }
+    
+    return model{
+        questions: questions,
+        current:   0,
+        done:      false,
+        quit:      false,
+    }
+}
+
+type model struct {
+    questions []Question
+    current   int
+    done      bool
+    quit      bool
+}
 
 func (m model) Init() tea.Cmd {
     return nil
