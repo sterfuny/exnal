@@ -7,7 +7,7 @@ import (
 	tea "charm.land/bubbletea/v2"
 )
 
-type ChoiceSingalQ struct {
+type ChoiceSingleQ struct {
     question string
     options  []string
     cursor   int
@@ -15,8 +15,8 @@ type ChoiceSingalQ struct {
     done     bool
 }
 
-func NewChoiceSingal(q string, opts []string) *ChoiceSingalQ {
-    return &ChoiceSingalQ{
+func NewChoiceSingle(q string, opts []string) *ChoiceSingleQ {
+    return &ChoiceSingleQ{
         question: q,
         options:  opts,
         cursor:   0,
@@ -24,7 +24,7 @@ func NewChoiceSingal(q string, opts []string) *ChoiceSingalQ {
     }
 }
 
-func (q *ChoiceSingalQ) Render() string {
+func (q *ChoiceSingleQ) Render() string {
     var sb strings.Builder
     sb.WriteString(fmt.Sprintf("❓ %s (选择题)\n\n", q.question))
     
@@ -48,7 +48,7 @@ func (q *ChoiceSingalQ) Render() string {
     return sb.String()
 }
 
-func (q *ChoiceSingalQ) HandleKey(msg tea.KeyMsg) (done bool, quit bool) {
+func (q *ChoiceSingleQ) HandleKey(msg tea.KeyMsg) (done bool, quit bool) {
     if q.done {
         return true, false
     }
@@ -72,14 +72,14 @@ func (q *ChoiceSingalQ) HandleKey(msg tea.KeyMsg) (done bool, quit bool) {
     return false, false
 }
 
-func (q *ChoiceSingalQ) GetQuestionText() string {
+func (q *ChoiceSingleQ) GetQuestionText() string {
     return q.question
 }
 
-func (q *ChoiceSingalQ) GetAnswer() any {
+func (q *ChoiceSingleQ) GetAnswer() any {
     return q.answer
 }
 
-func (q *ChoiceSingalQ) IsDone() bool {
+func (q *ChoiceSingleQ) IsDone() bool {
     return q.done
 }

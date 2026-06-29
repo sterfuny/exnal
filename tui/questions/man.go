@@ -3,7 +3,7 @@ package questions
 import (
 	tea "charm.land/bubbletea/v2"
 )
-// Question 所有题目类型都要实现的接口
+// 题目类型都要实现的接口
 type Question interface {
     // Render 渲染题目（包括当前输入/选择状态）
     Render() string
