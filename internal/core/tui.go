@@ -70,7 +70,7 @@ func (m model) View() tea.View {
     // 显示已完成的题目
     for i := 0; i < m.current; i++ {
         q := m.questions[i]
-        sb.WriteString(fmt.Sprintf("%s:\n  %v\n✅\n", q.GetQuestionText(), q.GetAnswer()))
+        sb.WriteString(fmt.Sprintf("%s:\n✅%v\n", q.GetQuestionText(), q.GetAnswer()))
     }
     
     if m.done {

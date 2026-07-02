@@ -26,7 +26,7 @@ func NewChoiceSingle(q string, opts []string) *ChoiceSingleQ {
 
 func (q *ChoiceSingleQ) Render() string {
     var sb strings.Builder
-    sb.WriteString(fmt.Sprintf("❓ %s (选择题)\n\n", q.question))
+    sb.WriteString(fmt.Sprintf("%s (选择题)\n\n", q.question))
     
     for i, opt := range q.options {
         cursor := " "

@@ -13,41 +13,71 @@ var questions = []Question{
 	// NewChoiceSingle("1", []string{"1", "2", "3", "4"}),
 	// NewInputSince("2"),
 }
-var rights [][]string
+type itemWithFlag struct {
+	opt string
+	flag bool
+}
+
+// 全部选项带真假
+var dataOpts [][]itemWithFlag
 
 func init() {
 	sections, err := anal.ParseMarkdown("test.md")
-	var allitems [][]string = rights
 
 	if err != nil {
 		fmt.Println("解析错误:", err)
 		return
 	}
 
-	for _, sec := range sections {
-		allitems = append(allitems, sec.Items)
+	for i, sec := range sections {
+		// allitems := dataOpts[i]
+		for _, v := range sec.Items.Trues {
+			dataOpts[i] = append(dataOpts[i],
+				itemWithFlag{v, true,},
+			)
+		}
+		for _, v := range sec.Items.Falses {
+			dataOpts[i] = append(dataOpts[i],
+				itemWithFlag{v, false,},
+			)
+		}
 	}
 
-	if len(sections) == len(allitems) {
-		for _ , sec := range sections {
-			q := NewChoiceSingle(sec.Title, sec.Items)
-			questions = append(questions, q)
+	if len(sections) == len(dataOpts) {
+		for k := range len(dataOpts) {
+			rand.Shuffle(len(dataOpts[k]), func(i, j int) {
+				// opt[j], opt[i] = opt[i], opt[j]
+				dataOpts[k][i], dataOpts[k][j] = dataOpts[k][j], dataOpts[k][i]
+			})
 		}
-		rand.Shuffle(len(questions), func(i, j int) {
+		rand.Shuffle(len(dataOpts), func(i, j int) {
+			// dataOpts[i], dataOpts[j] = dataOpts[j], dataOpts[i] 
 			questions[i], questions[j] = questions[j], questions[i]
 			// sections[i], sections[j] = sections[j], sections[i]
 			// allitems[i], allitems[j] = allitems[j], allitems[i]
 		})
+
+		for i , sec := range sections {
+			var opts []string
+			for _, item := range dataOpts[i] {
+				opts = append(opts, item.opt)
+			}
+			q := NewChoiceSingle(sec.Title, opts)
+			questions = append(questions, q)
+		}
 	} else {
 		panic("漏答案")
 	}
-
-	rights = allitems
-
 }
 
 func GetRight(index int) []string {
-	return rights[index]
+	var rights []string // (*dataOpts)[index]
+	for _, k := range dataOpts[index] {
+		if k.flag == true {
+			rights = append(rights, k.opt)
+		}
+	}
+	return rights
 }
 
 func GetQuestion(index int) Question {

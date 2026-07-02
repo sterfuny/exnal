@@ -23,6 +23,7 @@ func TestSomething(t *testing.T) {
 		allitems[i], allitems[j] = allitems[j], allitems[i]
 	})
 	for i := range len(sections) {
-		fmt.Printf("%d %s\n%s\n", i, sections[i].Title, allitems[i])
+		i = i
+		// fmt.Printf("%d %s\n%s\n", i, sections[i].Title, allitems[i])
 	}
 }
