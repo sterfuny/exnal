@@ -4,7 +4,6 @@ import(
 	"fmt"
 
 	. "exnal/tui/questions"
-	// "exnal/internal/core"
 	"exnal/internal/anal"
 	"math/rand"
 )
@@ -23,14 +22,13 @@ var dataOpts [][]itemWithFlag
 
 func init() {
 	sections, err := anal.ParseMarkdown("test.md")
-
 	if err != nil {
 		fmt.Println("解析错误:", err)
 		return
 	}
 
+	dataOpts = make([][]itemWithFlag, len(sections))
 	for i, sec := range sections {
-		// allitems := dataOpts[i]
 		for _, v := range sec.Items.Trues {
 			dataOpts[i] = append(dataOpts[i],
 				itemWithFlag{v, true,},
@@ -46,16 +44,9 @@ func init() {
 	if len(sections) == len(dataOpts) {
 		for k := range len(dataOpts) {
 			rand.Shuffle(len(dataOpts[k]), func(i, j int) {
-				// opt[j], opt[i] = opt[i], opt[j]
 				dataOpts[k][i], dataOpts[k][j] = dataOpts[k][j], dataOpts[k][i]
 			})
 		}
-		rand.Shuffle(len(dataOpts), func(i, j int) {
-			// dataOpts[i], dataOpts[j] = dataOpts[j], dataOpts[i] 
-			questions[i], questions[j] = questions[j], questions[i]
-			// sections[i], sections[j] = sections[j], sections[i]
-			// allitems[i], allitems[j] = allitems[j], allitems[i]
-		})
 
 		for i , sec := range sections {
 			var opts []string
@@ -65,6 +56,11 @@ func init() {
 			q := NewChoiceSingle(sec.Title, opts)
 			questions = append(questions, q)
 		}
+
+		rand.Shuffle(len(dataOpts), func(i, j int) {
+			dataOpts[i], dataOpts[j] = dataOpts[j], dataOpts[i]
+			questions[i], questions[j] = questions[j], questions[i]
+		})
 	} else {
 		panic("漏答案")
 	}

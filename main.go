@@ -6,8 +6,8 @@ import (
 )
 
 func main() {
-    p := tea.NewProgram(core.InitialModel())
-    if _, err := p.Run(); err != nil {
-        panic(err)
-    }
+	p := tea.NewProgram(core.InitialModel())
+	if _, err := p.Run(); err != nil {
+		panic(err)
+	}
 }
