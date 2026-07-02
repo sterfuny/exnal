@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"strings"
+	"slices"
 
 	tea "charm.land/bubbletea/v2"
 	. "exnal/tui/questions"
@@ -64,13 +65,40 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
     return m, nil
 }
 
+func compStrList(a []string, b []string) bool {
+	for _, A := range a {
+		if slices.Contains(b, A) {return true}
+	}
+	return false
+}
+
 func (m model) View() tea.View {
     var sb strings.Builder
-    
+
     // 显示已完成的题目
     for i := 0; i < m.current; i++ {
         q := m.questions[i]
-        sb.WriteString(fmt.Sprintf("%s:\n✅%v\n", q.GetQuestionText(), q.GetAnswer()))
+		if answer, ok := q.GetAnswer().([]string); ok {
+			if compStrList(answer, proctor.GetRight(i)) {
+				sb.WriteString(
+					fmt.Sprintf("%s:\n√■ %v\n",q.GetQuestionText(), answer),
+				)
+			} else {
+				sb.WriteString(
+					fmt.Sprintf("%s:\nx■ %v\n",q.GetQuestionText(), answer),
+				)
+			}
+		} else if answer, ok := q.GetAnswer().(string); ok {
+			if slices.Contains(proctor.GetRight(i), answer) {
+				sb.WriteString(
+					fmt.Sprintf("%s:\n√■ %v\n",q.GetQuestionText(), answer),
+				)
+			} else {
+				sb.WriteString(
+					fmt.Sprintf("%s:\nx■ %v\n",q.GetQuestionText(), answer),
+				)
+			}
+		}
     }
     
     if m.done {
