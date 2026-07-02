@@ -78,25 +78,18 @@ func (m model) View() tea.View {
     // 显示已完成的题目
     for i := 0; i < m.current; i++ {
         q := m.questions[i]
+		fmt.Fprintf(&sb, "%s:\n",q.GetQuestionText())
 		if answer, ok := q.GetAnswer().([]string); ok {
 			if compStrList(answer, proctor.GetRight(i)) {
-				sb.WriteString(
-					fmt.Sprintf("%s:\n√■ %v\n",q.GetQuestionText(), answer),
-				)
+				fmt.Fprintf(&sb, "√■ %v\n",answer)
 			} else {
-				sb.WriteString(
-					fmt.Sprintf("%s:\nx■ %v\n",q.GetQuestionText(), answer),
-				)
+				fmt.Fprintf(&sb, "x■ %v\n",answer)
 			}
 		} else if answer, ok := q.GetAnswer().(string); ok {
 			if slices.Contains(proctor.GetRight(i), answer) {
-				sb.WriteString(
-					fmt.Sprintf("%s:\n√■ %v\n",q.GetQuestionText(), answer),
-				)
+				fmt.Fprintf(&sb, "√■ %v\n",answer)
 			} else {
-				sb.WriteString(
-					fmt.Sprintf("%s:\nx■ %v\n",q.GetQuestionText(), answer),
-				)
+				fmt.Fprintf(&sb, "x■ %v\n",answer)
 			}
 		}
     }
@@ -116,7 +109,7 @@ func (m model) View() tea.View {
     }
     
     // 当前题目
-    sb.WriteString(fmt.Sprintf("[%d/%d] ", m.current+1, len(m.questions)))
+	fmt.Fprintf(&sb, "[%d/%d] ", m.current+1, len(m.questions))
     sb.WriteString(m.questions[m.current].Render())
 
     if m.quit {
