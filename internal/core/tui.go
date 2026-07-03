@@ -81,16 +81,18 @@ func (m model) View() tea.View {
 		fmt.Fprintf(&sb, "%s:\n",q.GetQuestionText())
 		if answer, ok := q.GetAnswer().([]string); ok {
 			if compStrList(answer, proctor.GetRight(i)) {
-				fmt.Fprintf(&sb, "√■ %v\n",answer)
+				fmt.Fprintf(&sb, "√■ ")
 			} else {
-				fmt.Fprintf(&sb, "x■ %v\n",answer)
+				fmt.Fprintf(&sb, "x■ ")
 			}
+			fmt.Fprintf(&sb, "%v\n",answer)
 		} else if answer, ok := q.GetAnswer().(string); ok {
 			if slices.Contains(proctor.GetRight(i), answer) {
-				fmt.Fprintf(&sb, "√■ %v\n",answer)
+				fmt.Fprintf(&sb, "√■ ")
 			} else {
-				fmt.Fprintf(&sb, "x■ %v\n",answer)
+				fmt.Fprintf(&sb, "x■ ")
 			}
+			fmt.Fprintf(&sb, "%v\n",answer)
 		}
     }
     
