@@ -20,8 +20,8 @@ type itemWithFlag struct {
 // 全部选项带真假
 var dataOpts [][]itemWithFlag
 
-func init() {
-	sections, err := anal.ParseMarkdown("test.md")
+func PreTopic(path string) {
+	sections, err := anal.ParseMarkdown(path)
 	if err != nil {
 		fmt.Println("解析错误:", err)
 		return

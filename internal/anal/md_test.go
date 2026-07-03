@@ -16,14 +16,17 @@ func TestSomething(t *testing.T) {
 	}
 
 	for _, sec := range sections {
-		allitems = append(allitems, sec.Items)
+		items := append(sec.Trues, sec.Falses...)
+		allitems = append(allitems, items)
 	}
 	rand.Shuffle(len(sections), func(i, j int) {
 		sections[i], sections[j] = sections[j], sections[i]
 		allitems[i], allitems[j] = allitems[j], allitems[i]
 	})
 	for i := range len(sections) {
-		i = i
-		// fmt.Printf("%d %s\n%s\n", i, sections[i].Title, allitems[i])
+		fmt.Printf("%d %s\n", i, sections[i].Title)
+		for _,v := range allitems[i] {
+			fmt.Printf("- %s\n", v)
+		}
 	}
 }
