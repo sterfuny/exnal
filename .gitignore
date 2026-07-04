@@ -1,6 +1,7 @@
 *.bin
 *.bak
 *.pem
-
-*.md
 *.bak*
+
+test/*.md
+exnal

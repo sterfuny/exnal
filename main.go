@@ -5,24 +5,24 @@ import (
 	"exnal/internal/core"
 	"exnal/internal/proctor"
 	"flag"
-	"fmt"
 	"os"
 )
 
 func main() {
-	filePath := flag.String("f", "", "Markdown 文件路径")
+	filePath := flag.String("f", "", "Markdown file path")
 
-	// 解析命令行参数
 	flag.Parse()
 
 	// 检查是否提供了 -f
 	if *filePath == "" {
-		fmt.Println("错误: 请使用 -f 指定文件路径")
 		flag.Usage()
-		os.Exit(1)
+		os.Exit(64)
 	}
 
-	proctor.PreTopic(*filePath)
+	if err := proctor.PreTopic(*filePath); err != nil {
+		os.Exit(66)
+	}
+
 	p := tea.NewProgram(core.InitialModel())
 	if _, err := p.Run(); err != nil {
 		panic(err)

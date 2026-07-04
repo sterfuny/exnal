@@ -20,11 +20,11 @@ type itemWithFlag struct {
 // 全部选项带真假
 var dataOpts [][]itemWithFlag
 
-func PreTopic(path string) {
+func PreTopic(path string) error {
 	sections, err := anal.ParseMarkdown(path)
 	if err != nil {
-		fmt.Println("解析错误:", err)
-		return
+		fmt.Println(err)
+		return err
 	}
 
 	dataOpts = make([][]itemWithFlag, len(sections))
@@ -62,8 +62,9 @@ func PreTopic(path string) {
 			questions[i], questions[j] = questions[j], questions[i]
 		})
 	} else {
-		panic("漏答案")
+		return fmt.Errorf("Some questions do not have an item yet.")
 	}
+	return nil
 }
 
 func GetRight(index int) []string {
