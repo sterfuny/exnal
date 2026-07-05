@@ -25,7 +25,7 @@ func TestSomething(t *testing.T) {
 	})
 	for i := range len(sections) {
 		fmt.Printf("%d %s\n", i, sections[i].Title)
-		for _,v := range allitems[i] {
+		for _, v := range allitems[i] {
 			fmt.Printf("- %s\n", v)
 		}
 	}

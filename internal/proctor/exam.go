@@ -55,6 +55,10 @@ func PreTopic(path string) error {
 				opts = append(opts, item.opt)
 			}
 
+			if len(opts) == 0 {
+				return fmt.Errorf("Some questions do not have an item yet.")
+			}
+
 			var q Question
 			switch sec.Type {
 			case ChoiceSingle:
@@ -66,7 +70,7 @@ func PreTopic(path string) error {
 			case InputChunk:
 				continue
 			default:
-				continue
+				return fmt.Errorf("unknown questions type")
 			}
 			questions = append(questions, q)
 		}
@@ -75,8 +79,6 @@ func PreTopic(path string) error {
 			dataOpts[i], dataOpts[j] = dataOpts[j], dataOpts[i]
 			questions[i], questions[j] = questions[j], questions[i]
 		})
-	} else {
-		return fmt.Errorf("Some questions do not have an item yet.")
 	}
 	return nil
 }
