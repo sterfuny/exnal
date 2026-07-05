@@ -1,15 +1,16 @@
 package questions
 
 import (
-	tea "charm.land/bubbletea/v2"
 	"strings"
+
+	tea "charm.land/bubbletea/v2"
 )
 
 // Question 枚举
 type QuestionType int
 
 const (
-	ChoiceSingle QuestionType = iota
+	ChoiceSingle QuestionType = iota + 1
 	ChoiceMulti
 	InputSince
 	InputChunk

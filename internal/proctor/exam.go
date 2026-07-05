@@ -1,10 +1,10 @@
 package proctor
 
-import(
+import (
 	"fmt"
 
-	. "exnal/tui/questions"
 	"exnal/internal/anal"
+	. "exnal/tui/questions"
 	"math/rand"
 )
 
@@ -12,8 +12,9 @@ var questions = []Question{
 	// NewChoiceSingle("1", []string{"1", "2", "3", "4"}),
 	// NewInputSince("2"),
 }
+
 type itemWithFlag struct {
-	opt string
+	opt  string
 	flag bool
 }
 
@@ -31,12 +32,12 @@ func PreTopic(path string) error {
 	for i, sec := range sections {
 		for _, v := range sec.Items.Trues {
 			dataOpts[i] = append(dataOpts[i],
-				itemWithFlag{v, true,},
+				itemWithFlag{v, true},
 			)
 		}
 		for _, v := range sec.Items.Falses {
 			dataOpts[i] = append(dataOpts[i],
-				itemWithFlag{v, false,},
+				itemWithFlag{v, false},
 			)
 		}
 	}
@@ -48,12 +49,25 @@ func PreTopic(path string) error {
 			})
 		}
 
-		for i , sec := range sections {
+		for i, sec := range sections {
 			var opts []string
 			for _, item := range dataOpts[i] {
 				opts = append(opts, item.opt)
 			}
-			q := NewChoiceSingle(sec.Title, opts)
+
+			var q Question
+			switch sec.Type {
+			case ChoiceSingle:
+				q = NewChoiceSingle(sec.Title, opts)
+			case ChoiceMulti:
+				continue
+			case InputSince:
+				continue
+			case InputChunk:
+				continue
+			default:
+				continue
+			}
 			questions = append(questions, q)
 		}
 

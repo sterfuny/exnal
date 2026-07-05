@@ -7,7 +7,10 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"exnal/tui/questions"
 )
+
 type Items struct{
 	Trues  []string
 	Falses []string
@@ -17,6 +20,7 @@ type Items struct{
 type Section struct {
 	Number int
 	Title  string
+	Type   questions.QuestionType
 	Items
 }
 
@@ -57,9 +61,11 @@ func ParseMarkdown(filePath string) ([]Section, error) {
 
 	titleRegex := regexp.MustCompile(`^(\d+)\.\s+(.*)`)
 	itemRegex := regexp.MustCompile(`^([-+*])\s+(.*)`)
+	typeRegex := regexp.MustCompile(`^#{1,6}\s+(.*)`)
 
 	inGlobalComment := false
 	scanner := bufio.NewScanner(file)
+	var nowType questions.QuestionType
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -84,12 +90,17 @@ func ParseMarkdown(filePath string) ([]Section, error) {
 			continue
 		}
 
-		isTitle := titleRegex.MatchString(trimmed)
-		isItem := itemRegex.MatchString(trimmed)
-
 		// ---------- 2. 截断逻辑 ----------
-		if currentSection != nil && !isTitle && !isItem {
+		isFlag := titleRegex.MatchString(trimmed) || itemRegex.MatchString(trimmed) || typeRegex.MatchString(trimmed)
+		if currentSection != nil && !isFlag {
 			currentSection = nil
+			continue
+		}
+
+		if matches := typeRegex.FindStringSubmatch(trimmed); matches != nil {
+			if t := questions.ParseType(matches[1]);t != -1 {
+				nowType = t
+			}
 			continue
 		}
 
@@ -99,16 +110,15 @@ func ParseMarkdown(filePath string) ([]Section, error) {
 			newSection := Section{
 				Number: num,
 				Title:  matches[2],
+				Type: 	nowType,
 			}
 			sections = append(sections, newSection)
 			currentSection = &sections[len(sections)-1]
 			continue
 		}
 
-		// ---------- 4. 匹配列表项（使用清洗函数） ----------
-		matches := itemRegex.FindStringSubmatch(trimmed)
-
-		if matches != nil && currentSection != nil{
+		// ---------- 4. 匹配列表项 ----------
+		if matches := itemRegex.FindStringSubmatch(trimmed); matches != nil && currentSection != nil{
 			i, v := matches[1], cleanItemText(matches[2])
 			item := &currentSection.Items
 
