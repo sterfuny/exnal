@@ -12,13 +12,23 @@ import (
 )
 
 var(
+	styleReset = "\x1b[0m"
 	rightStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("10")).
-		Background(lipgloss.Color("240"))
+		Foreground(lipgloss.Color("10"))
 	wrongStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("9")).
+		Foreground(lipgloss.Color("9"))
+	bg = lipgloss.NewStyle().
 		Background(lipgloss.Color("240"))
 )
+
+type model struct {
+	width  int
+	height int
+	questions []Question
+	current   int
+	done      bool
+	quit      bool
+}
 
 func InitialModel() model {
 
@@ -35,19 +45,16 @@ func InitialModel() model {
 	}
 }
 
-type model struct {
-	questions []Question
-	current   int
-	done      bool
-	quit      bool
-}
-
 func (m model) Init() tea.Cmd {
 	return nil
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.width = msg.Width
+		m.height = msg.Height
+
 	case tea.KeyMsg:
 		if m.done {
 			if msg.String() == "ctrl+c" || msg.String() == "q" {
@@ -96,6 +103,9 @@ func answerRender(r bool, self string, num *int) string {
 func (m model) View() tea.View {
 	var sb strings.Builder
 	var trueNum int = 0
+	canvas := lipgloss.NewStyle().
+		Width(m.width).
+		MaxHeight(m.height)
 
 	// 显示已完成的题目
 	for i := 0; i < m.current; i++ {
@@ -125,16 +135,16 @@ func (m model) View() tea.View {
 		//     sb.WriteString(fmt.Sprintf("  %s: %v\n", q.GetQuestionText(), q.GetAnswer()))
 		// }
 		sb.WriteString("\n按 q 退出")
-		return tea.View{Content: sb.String()}
+		return tea.View{Content: canvas.Render(sb.String())}
 	}
 
 	if m.current > 0 {
 		sb.WriteString("\n" + strings.Repeat("─", 40) + "\n\n")
 	}
 
-	fmt.Fprintf(&sb, "%s %s\n",
+	fmt.Fprintf(&sb, "%s%s\n",
 		rightStyle.Render(fmt.Sprintf("✓ %d", trueNum)),
-		wrongStyle.Render(fmt.Sprintf("✗ %d", m.current-trueNum)),
+		wrongStyle.Render(fmt.Sprintf(" ✗ %d", m.current-trueNum)),
 	)
 
 	// 当前题目
@@ -145,5 +155,5 @@ func (m model) View() tea.View {
 		fmt.Fprintf(&sb, "\n已退出\n")
 	}
 
-	return tea.View{Content: sb.String()}
+	return tea.View{Content: canvas.Render(sb.String())}
 }
