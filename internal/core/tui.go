@@ -84,8 +84,9 @@ func compStrList(a []string, b []string) bool {
 	return false
 }
 
-func answerRender(r bool, self string) string {
+func answerRender(r bool, self string, num *int) string {
 	if r {
+		*num++
 		return rightStyle.Render("✓ " + self)
 	} else {
 		return wrongStyle.Render("✗ " + self)
@@ -94,6 +95,7 @@ func answerRender(r bool, self string) string {
 
 func (m model) View() tea.View {
 	var sb strings.Builder
+	var trueNum int = 0
 
 	// 显示已完成的题目
 	for i := 0; i < m.current; i++ {
@@ -103,11 +105,15 @@ func (m model) View() tea.View {
 			fmt.Fprintf(&sb, "%s\n",answerRender(
 				compStrList(answer, proctor.GetRight(i)),
 				fmt.Sprintf( "%v", answer),
+				// fmt.Sprintf("%v",proctor.GetRight(i)),
+				&trueNum,
 			))
 		} else if answer, ok := q.GetAnswer().(string); ok {
 			fmt.Fprintf(&sb, "%s\n",answerRender(
 				slices.Contains(proctor.GetRight(i), answer),
 				answer,
+				// fmt.Sprintf("%v",proctor.GetRight(i)),
+				&trueNum,
 			))
 		}
 	}
@@ -125,6 +131,11 @@ func (m model) View() tea.View {
 	if m.current > 0 {
 		sb.WriteString("\n" + strings.Repeat("─", 40) + "\n\n")
 	}
+
+	fmt.Fprintf(&sb, "%s %s\n",
+		rightStyle.Render(fmt.Sprintf("✓ %d", trueNum)),
+		wrongStyle.Render(fmt.Sprintf("✗ %d", m.current-trueNum)),
+	)
 
 	// 当前题目
 	fmt.Fprintf(&sb, "[%d/%d] ", m.current+1, len(m.questions))
