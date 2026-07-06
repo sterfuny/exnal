@@ -27,7 +27,7 @@ type Section struct {
 // 保护反引号 `...` 内的内容
 // 移除常规注释 <!-- ... -->
 // 保留其他所有文本
-func cleanItemText(raw string) string {
+func cleanItemMix(raw string) string {
 	// 反引号内容替换为占位符
 	codeRegex := regexp.MustCompile("`[^`]*`")
 	codeBlocks := codeRegex.FindAllString(raw, -1)
@@ -119,7 +119,7 @@ func ParseMarkdown(filePath string) ([]Section, error) {
 
 		// ---------- 4. 匹配列表项 ----------
 		if matches := itemRegex.FindStringSubmatch(trimmed); matches != nil && currentSection != nil{
-			i, v := matches[1], cleanItemText(matches[2])
+			i, v := matches[1], cleanItemMix(matches[2])
 			item := &currentSection.Items
 
 			if i == "-" {

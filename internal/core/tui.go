@@ -8,6 +8,16 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"exnal/internal/proctor"
 	. "exnal/tui/questions"
+	"charm.land/lipgloss/v2"
+)
+
+var(
+	rightStyle = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("10")).
+		Background(lipgloss.Color("240"))
+	wrongStyle = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("9")).
+		Background(lipgloss.Color("240"))
 )
 
 func InitialModel() model {
@@ -74,6 +84,14 @@ func compStrList(a []string, b []string) bool {
 	return false
 }
 
+func answerRender(r bool, self string) string {
+	if r {
+		return rightStyle.Render("✓ " + self)
+	} else {
+		return wrongStyle.Render("✗ " + self)
+	}
+}
+
 func (m model) View() tea.View {
 	var sb strings.Builder
 
@@ -82,19 +100,15 @@ func (m model) View() tea.View {
 		q := m.questions[i]
 		fmt.Fprintf(&sb, "%s:\n", q.GetQuestionText())
 		if answer, ok := q.GetAnswer().([]string); ok {
-			if compStrList(answer, proctor.GetRight(i)) {
-				fmt.Fprintf(&sb, "√■ ")
-			} else {
-				fmt.Fprintf(&sb, "x■ ")
-			}
-			fmt.Fprintf(&sb, "%v\n", answer)
+			fmt.Fprintf(&sb, "%s\n",answerRender(
+				compStrList(answer, proctor.GetRight(i)),
+				fmt.Sprintf( "%v", answer),
+			))
 		} else if answer, ok := q.GetAnswer().(string); ok {
-			if slices.Contains(proctor.GetRight(i), answer) {
-				fmt.Fprintf(&sb, "√■ ")
-			} else {
-				fmt.Fprintf(&sb, "x■ ")
-			}
-			fmt.Fprintf(&sb, "%v\n", answer)
+			fmt.Fprintf(&sb, "%s\n",answerRender(
+				slices.Contains(proctor.GetRight(i), answer),
+				answer,
+			))
 		}
 	}
 
